@@ -131,7 +131,23 @@ enum TestMojo {
             }
             return null;
         }        
-    };
+    },
+    GATLING_MAVEN_PLUGIN_TEST("io.gatling", "gatling-maven-plugin", "test", "2.2.0") {
+        @Override
+        public Iterable<File> getReportFiles(MavenProject pom, MojoInfo mojo) throws ComponentConfigurationException {
+            File reportsFolder = mojo.getConfigurationValue("resultsFolder", File.class);
+            FileSet fileSet = Util.createFileSet(reportsFolder, "**/assertions.xml");
+            return super.getReportFiles(reportsFolder, fileSet);
+        }
+    },
+    GATLING_MAVEN_PLUGIN_INTEGRATION_TEST("io.gatling", "gatling-maven-plugin", "test", "2.2.0") {
+        @Override
+        public Iterable<File> getReportFiles(MavenProject pom, MojoInfo mojo)
+                throws ComponentConfigurationException {
+            return GATLING_MAVEN_PLUGIN_TEST.getReportFiles(pom, mojo);
+        }
+    }
+    ;
 
     private String reportDirectoryConfigKey;
     private Key key;
